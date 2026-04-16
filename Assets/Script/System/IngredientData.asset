@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4b9ec5c64a45f5a21fd3179a749f8, type: 3}
+  m_Name: IngredientData
+  m_EditorClassIdentifier: 
+  ingredients:
+  - ingredientDetail:
+      type: 0
+      scoreValue: 30
+      needChopping: 0
+      cookTime: 6
+    prefab: {fileID: 4638094900786289209, guid: a8e9230e67c3f40ddac038d27e761a79, type: 3}
+  - ingredientDetail:
+      type: 1
+      scoreValue: 10
+      needChopping: 0
+      cookTime: 1
+    prefab: {fileID: 1683493569395916784, guid: 53e4e02bafef74c6585313f2a930a2bb, type: 3}
+  - ingredientDetail:
+      type: 2
+      scoreValue: 20
+      needChopping: 0
+      cookTime: 2
+    prefab: {fileID: 3044620841256756763, guid: 44aafc8e26f354e5b848827d6f016219, type: 3}
