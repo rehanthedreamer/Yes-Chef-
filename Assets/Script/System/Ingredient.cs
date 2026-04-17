@@ -28,8 +28,17 @@ public class Ingredient : MonoBehaviour
         transform.SetParent(parent);
         transform.localPosition = position;
         if(ingredientDetail.type == IngredientType.Cheese) {
-            transform.localScale = Vector3.one; 
+            transform.localScale = Vector3.one*.1f; 
         } else
             transform.localScale = Vector3.one*15; 
+    }
+
+      public void PlaceOnChefHand(Transform parent) {
+        transform.SetParent(parent);
+        transform.localPosition = Vector3.zero;
+        if(ingredientDetail.type == IngredientType.Cheese) {
+            transform.localScale = Vector3.one*.1f; 
+        } else
+            transform.localScale = Vector3.one*1; 
     }
 }

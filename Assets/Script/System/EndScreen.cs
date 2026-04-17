@@ -4,12 +4,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections;
+using TMPro;
 
 public class EndScreen : MonoBehaviour
 {
    
     public static event Action OnRestartGame;
     public Button startAgainButton;
+    [SerializeField] private TextMeshProUGUI finalScoreText;
+    [SerializeField] private TextMeshProUGUI finalTitleText;
     [SerializeField] private CanvasGroup canvasGroup;
 
 
@@ -45,7 +48,15 @@ public class EndScreen : MonoBehaviour
     }
 
     void ScreenFadeIn() {
+        UpdateFinalScore();
         StartCoroutine(FadeIn());
+    }
+
+    void UpdateFinalScore() {
+         finalTitleText.text = ScoreManager.Instance.GetCurruntScore() > ScoreManager.Instance.GetFinalScore() ? "New HighScore: " :  "Best Score: ";
+        ScoreManager.Instance.SetFinalScore();
+        finalScoreText.text = ScoreManager.Instance.GetFinalScore().ToString();
+       
     }
      void ScreenFadeOut() {
         StartCoroutine(FadeOut());

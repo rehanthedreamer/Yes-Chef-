@@ -32,20 +32,24 @@ public class CustomerWindow : MonoBehaviour
         OnCustomerWindowEmpty?.Invoke(this);
     }
 
-    public void CustomerServed() {
+    public void CustomerServed(int score) {
         if (customerPlayer) {
-            CustomerManager.Instance.ReturnObject(customerPlayer.gameObject);
-            customerPlayer = null;
+            customerPlayer.StopOrderTimer();
+            customerPlayer.ShowScoreFloater(score);
+            ScoreManager.Instance.AddScore(score);
             StartCoroutine(NewCustomerDelay());
         }
     }
     
     IEnumerator NewCustomerDelay() {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(1.5f);
+         CustomerManager.Instance.ReturnObject(customerPlayer.gameObject);
+        customerPlayer = null;
+        yield return new WaitForSeconds(3.5f);
         OnCustomerWindowEmpty?.Invoke(this);
     }
    
    public bool IsCustomerPresent() {
-    return customerPlayer;
+    return customerPlayer != null;
    }
 }

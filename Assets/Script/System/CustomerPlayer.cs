@@ -11,6 +11,11 @@ public class CustomerPlayer : MonoBehaviour
 
     public List<IngredientType> orderIngredients = new List<IngredientType>();
     [SerializeField] private List<TextMeshProUGUI>  orderIngredientTexts = new List<TextMeshProUGUI>();
+    [SerializeField] private TextMeshProUGUI orderTimerText;
+    [SerializeField] CanvasGroup scoreFloater;
+    [SerializeField] TextMeshProUGUI scoreFloaterText;
+    float currentTime;
+    Coroutine orderTimerCoroutine;
     private void OnEnable() {
         
     }
@@ -22,14 +27,15 @@ public class CustomerPlayer : MonoBehaviour
     void Start()
     {
         // OnCustomerOrderGenerate?.Invoke();
-        HideGUIOgers();
+       
         InitOrder();
        
     }
 
-    void InitOrder()
+   public void InitOrder()
     {
-         int randomeIngredientCount = UnityEngine.Random.Range(1, 4);
+         HideGUIOgers();
+         int randomeIngredientCount = UnityEngine.Random.Range(2, 4); // Randomly decide if the order will have 2 or 3 ingredients
         for (int i = 0; i < randomeIngredientCount; i++) {
             IngredientType randomIngredient = 
             (IngredientType)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(IngredientType)).Length);
@@ -37,6 +43,7 @@ public class CustomerPlayer : MonoBehaviour
             orderIngredientTexts[i].text = randomIngredient.ToString();
             orderIngredientTexts[i].gameObject.SetActive(true);
         }
+        StartOrderTimer();
     }
 
     public List<IngredientType> GetOrderIngredients() {
@@ -50,9 +57,55 @@ public class CustomerPlayer : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    void StartOrderTimer() {
+        currentTime = 0;
+        if (orderTimerCoroutine != null) {
+            StopCoroutine(orderTimerCoroutine);
+            orderTimerCoroutine = null;
+        }
+        orderTimerCoroutine = StartCoroutine(OrderTimer());
+    }
+ private IEnumerator OrderTimer()
     {
-        
+        while (true) { 
+            currentTime += Time.deltaTime;
+            orderTimerText.text = Utills.FormatTime(currentTime).ToString();
+            yield return null; 
+        }
+    }
+
+    public void StopOrderTimer() {
+        if (orderTimerCoroutine != null) {
+            StopCoroutine(orderTimerCoroutine);
+            orderTimerCoroutine = null;
+        }
+    }
+
+    public float GetCurrentOrderTime() {
+        return currentTime;
+    }
+
+    public void ShowScoreFloater(int score) {
+        StartCoroutine(ScoreFloaterRoutine(score));
+    }
+    IEnumerator ScoreFloaterRoutine(int score) {
+        scoreFloaterText.text = "+" + score.ToString();
+        scoreFloater.alpha = 1f;
+        Vector3 originalPosition = scoreFloater.transform.localPosition;
+        Vector3 targetPosition = originalPosition + new Vector3(0, 2, 0); // Move up by 50 units
+        float duration = 1f; // Duration of the animation
+        float time = 0f;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float t = time / duration;
+            scoreFloater.transform.localPosition = Vector3.Lerp(originalPosition, targetPosition, t);
+            scoreFloater.alpha = Mathf.Lerp(1f, 0f, t); // Fade out
+            yield return null;
+        }
+
+        scoreFloater.transform.localPosition = originalPosition;
+        scoreFloater.alpha = 0f;
     }
 }

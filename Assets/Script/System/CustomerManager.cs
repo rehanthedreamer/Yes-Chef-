@@ -26,6 +26,7 @@ public class CustomerManager : Singleton<CustomerManager>
     void SpawnCustomer(CustomerWindow window)
     {
         window.customerPlayer = GetCustomer(window.customerNode.position, window.customerNode.rotation).GetComponent<CustomerPlayer>();
+        window.customerPlayer. InitOrder();
     }
 
 

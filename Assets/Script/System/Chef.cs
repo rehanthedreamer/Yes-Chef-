@@ -42,36 +42,44 @@ public class Chef : Singleton<Chef>
        table.FreePlate();
         foreach (var ingredient in curruntCustomerWindowServing.customerPlayer.GetOrderIngredients()) {
             Debug.Log("Pick up ingredient from fridge: " + ingredient);
-           
+           /// Move to fridge and pick up the ingredient
             yield return StartCoroutine(MoveToNode(fridge.chefNode));
+            /// Pick up the ingredient and wait for the pick up time
             yield return StartCoroutine(ShowProcessTime.Instance.StartFill(pickUpTime, processTimeCanvas));
         
             // chek if ingredient needs to be cooked or chopped and move to stove or table accordingly
              if (ingredient == IngredientType.Meat) {
                 Debug.Log("Cook ingredient on stove: " + ingredient);
+                var ingredientObj = OrderManager.Instance.GetOrderIngredientType(ingredient);
+                ingredientObj.PlaceOnChefHand(platePoint);
+                ingredientsCount.Add(ingredientObj);
+
                 yield return StartCoroutine(MoveToNode(stove.chefNode));
                 // Get the ingredient object on the stove and wait for the cook time
                 var burner = stove.GetAvailableBurner();
-                var ingredientObj = OrderManager.Instance.GetOrderIngredientType(ingredient, burner.UseBurner().position);
                 ingredientObj.SetParentAndPosiion(burner.UseBurner(), burner.UseBurner().position);
-                ingredientsCount.Add(ingredientObj);
                 // Wait for the cooking time to finish
                 yield return StartCoroutine(ShowProcessTime.Instance.StartFill(ingredientObj.GetIngredientProcessTime(), ingredientObj.transform));
-
+                /// After cooking is done, move the ingredient to the table
                 ingredientObj.SetParentAndPosiion(table.GetAvailablePlate(), table.GetAvailablePlate().position);
                 burner.FreeBurner();
             } else if (ingredient == IngredientType.Vegitable) {
                 Debug.Log("Chop ingredient on table: " + ingredient);
-                yield return StartCoroutine(MoveToNode(table.chefNode));
-                var ingredientObj = OrderManager.Instance.GetOrderIngredientType(ingredient, table.GetAvailablePlate().position);
-                    ingredientObj.SetParentAndPosiion(table.GetAvailablePlate(), table.GetAvailablePlate().position);
+                /// Move to table and chop the ingredient
+                 var ingredientObj = OrderManager.Instance.GetOrderIngredientType(ingredient);
+                  ingredientObj.PlaceOnChefHand(platePoint);
                 ingredientsCount.Add(ingredientObj);
+                /// Wait for the chopping time to finish
+                yield return StartCoroutine(MoveToNode(table.chefNode));
+                ingredientObj.SetParentAndPosiion(table.GetAvailablePlate(), table.GetAvailablePlate().position);
+                /// Wait for the chopping time to finish
                 yield return StartCoroutine( ShowProcessTime.Instance.StartFill(ingredientObj.GetIngredientProcessTime(), ingredientObj.transform)); 
             } else {
-                yield return StartCoroutine(MoveToNode(table.chefNode));
-                var ingredientObj = OrderManager.Instance.GetOrderIngredientType(ingredient, table.GetAvailablePlate().position);
-                ingredientObj.SetParentAndPosiion(table.GetAvailablePlate(), table.GetAvailablePlate().position);
+                 var ingredientObj = OrderManager.Instance.GetOrderIngredientType(ingredient);
+                   ingredientObj.PlaceOnChefHand(platePoint);
                 ingredientsCount.Add(ingredientObj);
+                yield return StartCoroutine(MoveToNode(table.chefNode));
+                ingredientObj.SetParentAndPosiion(table.GetAvailablePlate(), table.GetAvailablePlate().position);
                  ShowProcessTime.Instance.StartFill(ingredientObj.GetIngredientProcessTime(), ingredientObj.transform);
                 yield return StartCoroutine(ShowProcessTime.Instance.StartFill(ingredientObj.GetIngredientProcessTime(), ingredientObj.transform));
             }
@@ -81,11 +89,10 @@ public class Chef : Singleton<Chef>
         Debug.Log("Serve customer at window: " + curruntCustomerWindowServing.name);
         CarryPlateToCustomer();
         yield return StartCoroutine(MoveToNode(curruntCustomerWindowServing.orderServeNode));
-      
-           yield return StartCoroutine(ShowProcessTime.Instance.StartFill(pickUpTime, processTimeCanvas));
-         curruntCustomerWindowServing.CustomerServed();
-         ScoreManager.Instance.AddScore(CalculateScore());
-         curruntCustomerWindowServing = null;
+        yield return StartCoroutine(ShowProcessTime.Instance.StartFill(pickUpTime, processTimeCanvas));
+         curruntCustomerWindowServing.CustomerServed(CalculateScore());
+         yield return new WaitForSeconds(1f);
+        curruntCustomerWindowServing = null;
          table.FreePlate();
          RestoreIngredient();
          OnCustermberServed?.Invoke();
@@ -104,9 +111,9 @@ public class Chef : Singleton<Chef>
         int score = 0;
        foreach (var item in ingredientsCount)
        {
-         item.GetSoreVale();
+        score += item.GetSoreVale();
        }
-        return score;
+        return score + (-(int)curruntCustomerWindowServing.customerPlayer.GetCurrentOrderTime());
     }
 
      void MoveToStove() {

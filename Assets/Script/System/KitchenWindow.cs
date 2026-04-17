@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using UnityEngine;
 
 public class KitchenWindow : MonoBehaviour
@@ -33,7 +34,10 @@ public class KitchenWindow : MonoBehaviour
     }
 
     void ServeAnyCustomerWindow() {
-        var customerWindowToServe = customerWindows.Find(window => window.IsCustomerPresent());
+        var customerWindowToServe = customerWindows
+            .Where(window => window.IsCustomerPresent())
+            .OrderByDescending(window => window.customerPlayer.GetCurrentOrderTime())
+            .FirstOrDefault();
         if(customerWindowToServe != null) {
             ServeThisCustomerWindow?.Invoke(customerWindowToServe);
         }

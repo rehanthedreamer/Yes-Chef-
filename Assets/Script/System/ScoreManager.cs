@@ -16,4 +16,19 @@ public class ScoreManager : Singleton<ScoreManager>
         score += amount;
         OnScoreUpdate?.Invoke(score);
     }
+
+    public int GetCurruntScore() {
+        return score;
+    }
+
+    public int GetFinalScore() {
+        return PlayerPrefs.GetInt("FinalScore", 0);
+    }
+
+    public void SetFinalScore() {
+
+        if(GetCurruntScore() > GetFinalScore()) PlayerPrefs.SetInt("FinalScore", GetCurruntScore());
+       
+    }
+    
 }

@@ -38,7 +38,7 @@ public class OrderManager : Singleton<OrderManager>
       
     }
 
-    public Ingredient GetOrderIngredientType(IngredientType ingredientType, Vector3 position)
+    public Ingredient GetOrderIngredientType(IngredientType ingredientType)
     {
      // Ingredient obj =  pool.Find(obj => obj.GetIngredientType() == ingredientType);
        
@@ -46,7 +46,6 @@ public class OrderManager : Singleton<OrderManager>
        {
          if (ingredient.GetIngredientType() == ingredientType && !ingredient.gameObject.activeInHierarchy)
             {
-                ingredient.transform.position = position;
                 ingredient.gameObject.SetActive(true);
                 return ingredient;
             }
@@ -56,8 +55,8 @@ public class OrderManager : Singleton<OrderManager>
 
         // If all are active → create new one (optional)
        var thisIngredientData = ingredientData.ingredients.Find(data => data.ingredientDetail.type == ingredientType);
-        Ingredient newObj = Instantiate(thisIngredientData.prefab, position, Quaternion.identity, transform).GetComponent<Ingredient>();
-        pool.Add(   newObj);
+        Ingredient newObj = Instantiate(thisIngredientData.prefab, Vector3.zero, Quaternion.identity, transform).GetComponent<Ingredient>();
+        pool.Add(newObj);
         return newObj;
     }
 
