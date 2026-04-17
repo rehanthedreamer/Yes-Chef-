@@ -55,6 +55,7 @@ public class CustomerWindow : MonoBehaviour
     
     IEnumerator NewCustomerDelay() {
         yield return new WaitForSeconds(1.5f);
+        customerPlayer.ResetData();
         CustomerManager.Instance.ReturnObject(customerPlayer.gameObject);
         customerPlayer = null;
         yield return new WaitForSeconds(3.5f);

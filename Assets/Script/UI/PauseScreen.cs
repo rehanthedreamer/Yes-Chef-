@@ -4,20 +4,24 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using UnityEngine.SceneManagement;
 
 public class PauseScreen : MonoBehaviour
 {
     public Button resumeBtn;
+    public Button quitBtn;
     [SerializeField] private CanvasGroup canvasGroup;
 
 
     private void OnEnable() {
+        quitBtn.onClick.AddListener(QuitGame);
         resumeBtn.onClick.AddListener(GameResume);
         TimerHUD.OnGammePause += ScreenFadeIn;
        
     }
 
     private void OnDisable() {
+        quitBtn.onClick.RemoveListener(QuitGame);
         resumeBtn.onClick.RemoveListener(GameResume);
         TimerHUD.OnGammePause -= ScreenFadeIn;
         
@@ -63,5 +67,9 @@ public class PauseScreen : MonoBehaviour
             yield return null;
         }
          transform.localScale = Vector3.zero;
+    }
+
+    void QuitGame() {
+       SceneManager.LoadScene("Gameplay");
     }
 }

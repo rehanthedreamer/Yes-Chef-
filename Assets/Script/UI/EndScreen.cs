@@ -5,12 +5,15 @@ using UnityEngine.UI;
 using System;
 using System.Collections;
 using TMPro;
+using UnityEditor.SearchService;
+using UnityEngine.SceneManagement;
 
 public class EndScreen : MonoBehaviour
 {
    
     public static event Action OnRestartGame;
     public Button startAgainButton;
+     public Button quitButton;
     [SerializeField] private TextMeshProUGUI finalScoreText;
     [SerializeField] private TextMeshProUGUI finalTitleText;
     [SerializeField] private CanvasGroup canvasGroup;
@@ -18,15 +21,17 @@ public class EndScreen : MonoBehaviour
 
     private void OnEnable() {
         startAgainButton.onClick.AddListener(RestartGame);
-        StartScreen.OnStartGame += ScreenFadeOut;
+        quitButton.onClick.AddListener(QuitGame);
+       // StartScreen.OnStartGame += ScreenFadeOut;
         GameTimer.OnTimerComplete += ScreenFadeIn;
        
     }
 
     private void OnDisable() {
         startAgainButton.onClick.RemoveListener(RestartGame);
+        quitButton.onClick.RemoveListener(QuitGame);
         GameTimer.OnTimerComplete -= ScreenFadeIn;
-        StartScreen.OnStartGame -= ScreenFadeOut;
+      //  StartScreen.OnStartGame -= ScreenFadeOut;
     }
     // Start is called before the first frame update
    
@@ -80,5 +85,8 @@ public class EndScreen : MonoBehaviour
             yield return null;
         }
          transform.localScale = Vector3.zero;
+    }
+    void QuitGame() {
+       SceneManager.LoadScene("Gameplay");
     }
 }

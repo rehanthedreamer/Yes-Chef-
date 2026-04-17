@@ -101,6 +101,7 @@ public class CustomerPlayer : MonoBehaviour
             time += Time.deltaTime;
             float t = time / duration;
             scoreFloater.transform.localPosition = Vector3.Lerp(originalPosition, targetPosition, t);
+            scoreFloater.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.one * 2.5f, t); // Scale up
             scoreFloater.alpha = Mathf.Lerp(1f, 0f, t); // Fade out
             yield return null;
         }

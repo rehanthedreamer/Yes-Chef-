@@ -47,7 +47,12 @@ public class Chef : Singleton<Chef>
     {
        table.FreePlate();
        yield return new WaitUntil(() => GameManager.isGameStarted);
-        foreach (var ingredient in curruntCustomerWindowServing.customerPlayer.GetOrderIngredients()) {
+       var ingredients = new List<IngredientType>(
+                    curruntCustomerWindowServing.customerPlayer.GetOrderIngredients()
+                        );
+
+                        Debug.Log("Processing order for customer window: "+(", ", ingredients));
+        foreach (var ingredient in ingredients) {
             Debug.Log("Pick` up ingredient from fridge: " + ingredient);
            /// Move to fridge and pick up the ingredient
             yield return StartCoroutine(MoveToNode(fridge.chefNode));
@@ -70,7 +75,7 @@ public class Chef : Singleton<Chef>
                 /// After cooking is done, move the ingredient to the table
                 ingredientObj.SetParentAndPosiion(table.GetAvailablePlate(), table.GetAvailablePlate().position);
                 burner.FreeBurner();
-            } else if (ingredient == IngredientType.Vegitable) {
+            } else if (ingredient == IngredientType.Vegetable) {
                 Debug.Log("Chop ingredient on table: " + ingredient);
                 /// Move to table and chop the ingredient
                  var ingredientObj = OrderManager.Instance.GetOrderIngredientType(ingredient);
@@ -99,7 +104,8 @@ public class Chef : Singleton<Chef>
         CarryPlateToCustomer();
         yield return StartCoroutine(MoveToNode(curruntCustomerWindowServing.orderServeNode));
         yield return StartCoroutine(ShowProcessTime.Instance.StartFill(pickUpTime, processTimeCanvas));
-         curruntCustomerWindowServing.CustomerServed(CalculateScore());
+       
+        curruntCustomerWindowServing.CustomerServed(CalculateScore());
          yield return new WaitForSeconds(1f);
         ServeNewCustomer();
     }
@@ -127,7 +133,7 @@ public class Chef : Singleton<Chef>
        {
         score += item.GetSoreVale();
        }
-        return score + (-(int)curruntCustomerWindowServing.customerPlayer.GetCurrentOrderTime());
+        return score + (-(int)curruntCustomerWindowServing.customerPlayer.GetCurrentOrderTime()/2);
     }
 
      void MoveToStove() {

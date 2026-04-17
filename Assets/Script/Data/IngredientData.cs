@@ -31,5 +31,5 @@ public class IngredientDetail
 public enum IngredientType {
     Meat,
     Cheese,
-    Vegitable
+    Vegetable
 }
