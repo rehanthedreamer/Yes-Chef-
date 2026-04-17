@@ -39,6 +39,10 @@ public class CustomerPlayer : MonoBehaviour
         }
     }
 
+    public List<IngredientType> GetOrderIngredients() {
+        return orderIngredients;
+    }
+
     void HideGUIOgers()
     {
         foreach (var text in orderIngredientTexts) {

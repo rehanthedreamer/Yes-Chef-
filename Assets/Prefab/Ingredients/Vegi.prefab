@@ -143,10 +143,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ingredientDetail:
     type: 0
-    scoreValue: 0
-    needChopping: 0
-    cookTime: 0
-    prefab: {fileID: 0}
+    scoreValue: 20
+    needChopping: 1
+    cookTime: 2
 --- !u!1 &3044620841671701379
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CustomerManager : MonoBehaviour
+public class CustomerManager : Singleton<CustomerManager>
 {
     public CustomerData customerData;
     public int poolSize = 10;
-
     private List<GameObject> pool;
+    
 
     void Awake()
     {

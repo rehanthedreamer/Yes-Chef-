@@ -570,6 +570,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2159822403522114912}
   - component: {fileID: 7755302156218958513}
+  - component: {fileID: -6279421358559644442}
   m_Layer: 0
   m_Name: Customer 2
   m_TagString: Untagged
@@ -612,6 +613,27 @@ MonoBehaviour:
   - {fileID: 639953158490562798}
   - {fileID: 2365176055858331095}
   - {fileID: 7149708563068766672}
+--- !u!95 &-6279421358559644442
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1635628708480806874}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a62db5c2ddaa84001875a0b2815ea218, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1650097856141900728
 GameObject:
   m_ObjectHideFlags: 0

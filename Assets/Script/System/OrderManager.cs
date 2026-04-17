@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OrderManager : MonoBehaviour
+public class OrderManager : Singleton<OrderManager>
 {
     public IngredientData ingredientData;
     public int poolSize = 10;
+    private List<Ingredient> pool;
 
-    private List<GameObject> pool;
 
     void Awake()
     {
@@ -24,41 +24,46 @@ public class OrderManager : MonoBehaviour
 /// </summary>
     void PoolInit()
     {
-         pool = new List<GameObject>();
+         pool = new List<Ingredient>();
 
         for (int j = 0; j < ingredientData.ingredients.Count; j++)
         {
               for (int i = 0; i < poolSize; i++)
             {
-                GameObject obj = Instantiate(ingredientData.ingredients[j].prefab, transform);
-                obj.SetActive(false);
+                Ingredient obj = Instantiate(ingredientData.ingredients[j].prefab, transform).GetComponent<Ingredient>();
+                obj.gameObject.SetActive(false);
                 pool.Add(obj);
             }
         }
       
     }
 
-    public GameObject GetCustomer(Vector3 position, Quaternion rotation)
+    public Ingredient GetOrderIngredientType(IngredientType ingredientType, Vector3 position)
     {
-        foreach (var obj in pool)
-        {
-            if (!obj.activeInHierarchy)
+     // Ingredient obj =  pool.Find(obj => obj.GetIngredientType() == ingredientType);
+       
+       foreach (var ingredient in pool)
+       {
+         if (ingredient.GetIngredientType() == ingredientType && !ingredient.gameObject.activeInHierarchy)
             {
-                obj.transform.position = position;
-                obj.transform.rotation = rotation;
-                obj.SetActive(true);
-                return obj;
+                ingredient.transform.position = position;
+                ingredient.gameObject.SetActive(true);
+                return ingredient;
             }
-        }
+       }
+           
+     
 
         // If all are active → create new one (optional)
-        GameObject newObj = Instantiate(ingredientData.ingredients[Random.Range(0, ingredientData.ingredients.Count)].prefab, position, rotation, transform);
-        pool.Add(newObj);
+       var thisIngredientData = ingredientData.ingredients.Find(data => data.ingredientDetail.type == ingredientType);
+        Ingredient newObj = Instantiate(thisIngredientData.prefab, position, Quaternion.identity, transform).GetComponent<Ingredient>();
+        pool.Add(   newObj);
         return newObj;
     }
 
     public void ReturnObject(GameObject obj)
     {
         obj.SetActive(false);
+        obj.transform.SetParent(transform);
     }
 }

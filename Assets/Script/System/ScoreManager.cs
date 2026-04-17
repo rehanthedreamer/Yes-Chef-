@@ -7,6 +7,11 @@ public class ScoreManager : Singleton<ScoreManager>
     public static event System.Action<int> OnScoreUpdate;
     // Start is called before the first frame update
     private int score = 0;
+
+    void Start()
+    {
+        OnScoreUpdate?.Invoke(score);
+    }
     public void AddScore(int amount) {
         score += amount;
         OnScoreUpdate?.Invoke(score);

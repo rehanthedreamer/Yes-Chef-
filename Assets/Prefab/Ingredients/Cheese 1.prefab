@@ -45,11 +45,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ingredientDetail:
-    type: 0
-    scoreValue: 0
+    type: 1
+    scoreValue: 10
     needChopping: 0
     cookTime: 0
-    prefab: {fileID: 0}
 --- !u!1001 &3962577978994818066
 PrefabInstance:
   m_ObjectHideFlags: 0

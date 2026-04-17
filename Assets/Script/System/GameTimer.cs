@@ -28,6 +28,7 @@ public class GameTimer : MonoBehaviour
         StopTimer();
         currentTime = duration;
         timerRoutine = StartCoroutine(RunTimer());
+        GameManager.isGameStarted = true;
     }
 
     public void StopTimer()
@@ -52,7 +53,7 @@ public class GameTimer : MonoBehaviour
         currentTime = 0f;
         OnTimerUpdate?.Invoke(currentTime);
         OnTimerComplete?.Invoke();
-
+        GameManager.isGameStarted = false;
         timerRoutine = null;
 
     }
