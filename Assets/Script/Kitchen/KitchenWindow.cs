@@ -13,20 +13,25 @@ public class KitchenWindow : MonoBehaviour
 
     private void OnEnable() {
         Chef.OnCustermberServed += ServeAnyCustomerWindow;
+         StartScreen.OnStartGame += StartWithDelay;
+         EndScreen.OnRestartGame += StartWithDelay;
     }
 
     private void OnDisable() {
         Chef.OnCustermberServed -= ServeAnyCustomerWindow;
+        StartScreen.OnStartGame -= StartWithDelay;
+        EndScreen.OnRestartGame -= StartWithDelay;
+       
     }
 
-    void Start()
+    void StartWithDelay()
     {
         StartCoroutine(ServeAnyCustomerWindowWithDelay());
     }
 
     IEnumerator ServeAnyCustomerWindowWithDelay() {
         yield return new WaitUntil(() => GameManager.isGameStarted);
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(2f);
         var customerWindowToServe = customerWindows.Find(window => window.IsCustomerPresent());
         if(customerWindowToServe != null) {
             ServeThisCustomerWindow?.Invoke(customerWindowToServe);
@@ -34,12 +39,15 @@ public class KitchenWindow : MonoBehaviour
     }
 
     void ServeAnyCustomerWindow() {
+
+        Debug.Log("Chef served a customer, checking for next customer to serve...");
         var customerWindowToServe = customerWindows
             .Where(window => window.IsCustomerPresent())
             .OrderByDescending(window => window.customerPlayer.GetCurrentOrderTime())
             .FirstOrDefault();
         if(customerWindowToServe != null) {
             ServeThisCustomerWindow?.Invoke(customerWindowToServe);
+             Debug.Log("Invoked ServeThisCustomerWindow event for customer window: " + customerWindowToServe.name);
         }
     }
  

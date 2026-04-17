@@ -28,7 +28,7 @@ public class Ingredient : MonoBehaviour
         transform.SetParent(parent);
         transform.localPosition = position;
         if(ingredientDetail.type == IngredientType.Cheese) {
-            transform.localScale = Vector3.one*.1f; 
+            transform.localScale = Vector3.one; 
         } else
             transform.localScale = Vector3.one*15; 
     }

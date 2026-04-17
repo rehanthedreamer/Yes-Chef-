@@ -17,26 +17,27 @@ public class EndScreen : MonoBehaviour
 
 
     private void OnEnable() {
-        startAgainButton.onClick.AddListener(StartGame);
+        startAgainButton.onClick.AddListener(RestartGame);
         StartScreen.OnStartGame += ScreenFadeOut;
         GameTimer.OnTimerComplete += ScreenFadeIn;
        
     }
 
     private void OnDisable() {
-        startAgainButton.onClick.RemoveListener(StartGame);
+        startAgainButton.onClick.RemoveListener(RestartGame);
         GameTimer.OnTimerComplete -= ScreenFadeIn;
         StartScreen.OnStartGame -= ScreenFadeOut;
     }
     // Start is called before the first frame update
    
-   void StartGame() {
+   void RestartGame() {
         StartCoroutine(FadeOut());
         OnRestartGame?.Invoke();
-        // Invoke("LoadGame", 1f);
+       GameManager.isGameStarted = true;
     }
 
     IEnumerator FadeIn() {
+         transform.localScale = Vector3.one;
         float duration = 1f;
         float time = 0f;
 
@@ -45,6 +46,7 @@ public class EndScreen : MonoBehaviour
             canvasGroup.alpha = UnityEngine.Mathf.Lerp(0f, 1f, time / duration);
             yield return null;
         }
+        transform.localScale = Vector3.one;
     }
 
     void ScreenFadeIn() {
@@ -53,9 +55,14 @@ public class EndScreen : MonoBehaviour
     }
 
     void UpdateFinalScore() {
-         finalTitleText.text = ScoreManager.Instance.GetCurruntScore() > ScoreManager.Instance.GetFinalScore() ? "New HighScore: " :  "Best Score: ";
-        ScoreManager.Instance.SetFinalScore();
-        finalScoreText.text = ScoreManager.Instance.GetFinalScore().ToString();
+        finalTitleText.text = ScoreManager.Instance.GetCurruntScore() > ScoreManager.Instance.GetSavedScore() ? "New HighScore: " :  "Score: ";
+       if(ScoreManager.Instance.GetCurruntScore() > ScoreManager.Instance.GetSavedScore())
+        {
+             ScoreManager.Instance.SaveNewHighScore();
+             finalScoreText.text = ScoreManager.Instance.GetSavedScore().ToString();
+        }
+        else
+        finalScoreText.text = ScoreManager.Instance.GetCurruntScore().ToString();
        
     }
      void ScreenFadeOut() {
@@ -63,6 +70,7 @@ public class EndScreen : MonoBehaviour
     }
     
     IEnumerator FadeOut() {
+         transform.localScale = Vector3.one;
         float duration = 1f;
         float time = 0f;
 
@@ -71,5 +79,6 @@ public class EndScreen : MonoBehaviour
             canvasGroup.alpha = UnityEngine.Mathf.Lerp(1f, 0f, time / duration);
             yield return null;
         }
+         transform.localScale = Vector3.zero;
     }
 }

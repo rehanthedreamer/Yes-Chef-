@@ -9,6 +9,15 @@ public class StoveBurner : MonoBehaviour
     [SerializeField] Transform utinsils;
 
 
+    void OnEnable()
+    {
+        GameTimer.OnTimerComplete += ResetData;
+    }
+    void OnDestroy()
+    {
+        GameTimer.OnTimerComplete -= ResetData;
+    }
+
     void Start()
     {
         FreeBurner();
@@ -28,4 +37,10 @@ public class StoveBurner : MonoBehaviour
         isBussy = false;
         utinsils.gameObject.SetActive(false);
     }
+
+    void ResetData() {
+        isBussy = false;
+        utinsils.gameObject.SetActive(false);
+    }
 }
+

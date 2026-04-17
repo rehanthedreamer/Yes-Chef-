@@ -17,18 +17,18 @@ public class CustomerPlayer : MonoBehaviour
     float currentTime;
     Coroutine orderTimerCoroutine;
     private void OnEnable() {
-        
+         GameTimer.OnTimerComplete += ResetData;
     }
 
     private void OnDisable() {
-        
+        GameTimer.OnTimerComplete -= ResetData;
     }
     // Start is called before the first frame update
     void Start()
     {
         // OnCustomerOrderGenerate?.Invoke();
        
-        InitOrder();
+      //  InitOrder();
        
     }
 
@@ -106,6 +106,13 @@ public class CustomerPlayer : MonoBehaviour
         }
 
         scoreFloater.transform.localPosition = originalPosition;
+        scoreFloater.alpha = 0f;
+    }
+
+    public void ResetData() {
+        StopOrderTimer();
+        orderIngredients.Clear();
+        HideGUIOgers();
         scoreFloater.alpha = 0f;
     }
 }

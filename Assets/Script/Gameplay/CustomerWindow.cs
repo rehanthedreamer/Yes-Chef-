@@ -15,11 +15,15 @@ public class CustomerWindow : MonoBehaviour
     public CustomerPlayer customerPlayer;
     // Start is called before the first frame update
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
+        EndScreen.OnRestartGame += SpawnCustomerNow;
+         GameTimer.OnTimerComplete += ResetData;
     }
 
     private void OnDisable() {
-        
+        EndScreen.OnRestartGame -= SpawnCustomerNow;
+        GameTimer.OnTimerComplete -= ResetData;
     }
 
     void Start()
@@ -27,10 +31,18 @@ public class CustomerWindow : MonoBehaviour
         StartCoroutine(SpawnCustomer());
     }
     IEnumerator SpawnCustomer() {
+         Debug.Log("Spawning Customer********* 1 "+ IsCustomerPresent() + " Game Started: "+ GameManager.isGameStarted);
         yield return new WaitUntil(() => !IsCustomerPresent() && GameManager.isGameStarted);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0f);
+        Debug.Log("Spawning Customer*********");
         OnCustomerWindowEmpty?.Invoke(this);
     }
+
+    void SpawnCustomerNow() {
+       StartCoroutine(SpawnCustomer());
+    }
+
+    
 
     public void CustomerServed(int score) {
         if (customerPlayer) {
@@ -43,7 +55,7 @@ public class CustomerWindow : MonoBehaviour
     
     IEnumerator NewCustomerDelay() {
         yield return new WaitForSeconds(1.5f);
-         CustomerManager.Instance.ReturnObject(customerPlayer.gameObject);
+        CustomerManager.Instance.ReturnObject(customerPlayer.gameObject);
         customerPlayer = null;
         yield return new WaitForSeconds(3.5f);
         OnCustomerWindowEmpty?.Invoke(this);
@@ -51,5 +63,9 @@ public class CustomerWindow : MonoBehaviour
    
    public bool IsCustomerPresent() {
     return customerPlayer != null;
+   }
+
+   void ResetData() {
+    customerPlayer = null;
    }
 }

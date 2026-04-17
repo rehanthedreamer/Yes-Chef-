@@ -9,6 +9,16 @@ public class OrderManager : Singleton<OrderManager>
     private List<Ingredient> pool;
 
 
+    void OnEnable()
+    {
+        GameTimer.OnTimerComplete += ResetData;
+        
+    }
+    void OnDisable()
+    {
+        GameTimer.OnTimerComplete -= ResetData;
+    }
+
     void Awake()
     {
        PoolInit();
@@ -64,5 +74,12 @@ public class OrderManager : Singleton<OrderManager>
     {
         obj.SetActive(false);
         obj.transform.SetParent(transform);
+    }
+
+    public void ResetData() {
+        foreach (var obj in pool) {
+            obj.gameObject.SetActive(false);
+            obj.transform.SetParent(transform);
+        }
     }
 }

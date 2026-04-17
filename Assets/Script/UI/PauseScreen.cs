@@ -1,42 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 using System;
-using System.Collections;
 
-public class StartScreen : MonoBehaviour
+public class PauseScreen : MonoBehaviour
 {
-
-    public static event Action OnStartGame;
-    public Button startButton;
+    public Button resumeBtn;
     [SerializeField] private CanvasGroup canvasGroup;
 
 
     private void OnEnable() {
-        startButton.onClick.AddListener(StartGame);
-        EndScreen.OnRestartGame += ScreenFadeOut;
+        resumeBtn.onClick.AddListener(GameResume);
+        TimerHUD.OnGammePause += ScreenFadeIn;
+       
     }
 
     private void OnDisable() {
-        startButton.onClick.RemoveListener(StartGame);
-        EndScreen.OnRestartGame -= ScreenFadeOut;
+        resumeBtn.onClick.RemoveListener(GameResume);
+        TimerHUD.OnGammePause -= ScreenFadeIn;
+        
     }
     // Start is called before the first frame update
    
-   void StartGame() {
+   void GameResume() {
+        Time.timeScale = 1f;
         StartCoroutine(FadeOut());
-        OnStartGame?.Invoke();
-        // Invoke("LoadGame", 1f);
+        GameManager.isGameStarted = true;
     }
 
-    void ScreenFadeOut() {
-        StartCoroutine(FadeOut());
-    }
-    void ScreenFadeIn() {
-        StartCoroutine(FadeIn());
-    }
     IEnumerator FadeIn() {
+         transform.localScale = Vector3.one;
         float duration = 1f;
         float time = 0f;
 
@@ -45,8 +40,19 @@ public class StartScreen : MonoBehaviour
             canvasGroup.alpha = UnityEngine.Mathf.Lerp(0f, 1f, time / duration);
             yield return null;
         }
+         Time.timeScale = 0f;
+        transform.localScale = Vector3.one;
     }
 
+    void ScreenFadeIn() {
+        StartCoroutine(FadeIn());
+    }
+
+    
+     void ScreenFadeOut() {
+        StartCoroutine(FadeOut());
+    }
+    
     IEnumerator FadeOut() {
         float duration = 1f;
         float time = 0f;
@@ -56,5 +62,6 @@ public class StartScreen : MonoBehaviour
             canvasGroup.alpha = UnityEngine.Mathf.Lerp(1f, 0f, time / duration);
             yield return null;
         }
+         transform.localScale = Vector3.zero;
     }
 }

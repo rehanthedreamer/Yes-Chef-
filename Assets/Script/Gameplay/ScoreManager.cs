@@ -8,6 +8,15 @@ public class ScoreManager : Singleton<ScoreManager>
     // Start is called before the first frame update
     private int score = 0;
 
+    void OnEnable()
+    {
+       GameTimer.OnTimerComplete += ResetData;
+    }
+    void OnDisable()
+    {
+        GameTimer.OnTimerComplete -= ResetData;
+    }
+
     void Start()
     {
         OnScoreUpdate?.Invoke(score);
@@ -21,14 +30,19 @@ public class ScoreManager : Singleton<ScoreManager>
         return score;
     }
 
-    public int GetFinalScore() {
+    public void SaveNewHighScore() {
+        PlayerPrefs.SetInt("FinalScore", GetCurruntScore());
+    }
+
+    public int GetSavedScore()
+    {
         return PlayerPrefs.GetInt("FinalScore", 0);
     }
 
-    public void SetFinalScore() {
 
-        if(GetCurruntScore() > GetFinalScore()) PlayerPrefs.SetInt("FinalScore", GetCurruntScore());
-       
+    public void ResetData() {
+        score = 0;
+        OnScoreUpdate?.Invoke(score);
     }
     
 }

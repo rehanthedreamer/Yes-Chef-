@@ -17,15 +17,20 @@ public class Chef : Singleton<Chef>
     public static event System.Action OnCustermberServed;
     float pickUpTime = 1f;
     public Transform processTimeCanvas;
+    Coroutine processOrderCoroutine;
     // Start is called before the first frame update
 
     private void OnEnable() {
         
         KitchenWindow.ServeThisCustomerWindow += ServeCustomerWindow;
+        GameTimer.OnTimerComplete += ResetData;
+        EndScreen.OnRestartGame += ServeNewCustomer;
     }
 
     private void OnDisable() {
         KitchenWindow.ServeThisCustomerWindow -= ServeCustomerWindow;
+        GameTimer.OnTimerComplete -= ResetData;
+        EndScreen.OnRestartGame -= ServeNewCustomer;
     }
     void Start()
     {
@@ -34,14 +39,16 @@ public class Chef : Singleton<Chef>
     void ServeCustomerWindow( CustomerWindow customerWindow) {
         curruntCustomerWindowServing = customerWindow;
         // Process the order and serve the customer
-        StartCoroutine(ProcessOrder());
+        StopProcessOrderCoroutine();
+        processOrderCoroutine =  StartCoroutine(ProcessOrder());
     }
 
     IEnumerator ProcessOrder()
     {
        table.FreePlate();
+       yield return new WaitUntil(() => GameManager.isGameStarted);
         foreach (var ingredient in curruntCustomerWindowServing.customerPlayer.GetOrderIngredients()) {
-            Debug.Log("Pick up ingredient from fridge: " + ingredient);
+            Debug.Log("Pick` up ingredient from fridge: " + ingredient);
            /// Move to fridge and pick up the ingredient
             yield return StartCoroutine(MoveToNode(fridge.chefNode));
             /// Pick up the ingredient and wait for the pick up time
@@ -83,6 +90,8 @@ public class Chef : Singleton<Chef>
                  ShowProcessTime.Instance.StartFill(ingredientObj.GetIngredientProcessTime(), ingredientObj.transform);
                 yield return StartCoroutine(ShowProcessTime.Instance.StartFill(ingredientObj.GetIngredientProcessTime(), ingredientObj.transform));
             }
+
+             yield return new WaitUntil(() => GameManager.isGameStarted);
         }
 
         // After processing all ingredients, serve the customer
@@ -92,9 +101,14 @@ public class Chef : Singleton<Chef>
         yield return StartCoroutine(ShowProcessTime.Instance.StartFill(pickUpTime, processTimeCanvas));
          curruntCustomerWindowServing.CustomerServed(CalculateScore());
          yield return new WaitForSeconds(1f);
+        ServeNewCustomer();
+    }
+
+    void ServeNewCustomer() {
         curruntCustomerWindowServing = null;
          table.FreePlate();
          RestoreIngredient();
+         Debug.Log("Invoking OnCustomerServed event");
          OnCustermberServed?.Invoke();
     }
 
@@ -169,5 +183,19 @@ public class Chef : Singleton<Chef>
     
     public CustomerWindow GetCurrentCustomerWindow() {
         return curruntCustomerWindowServing;
+    }
+
+    void ResetData() {
+        curruntCustomerWindowServing = null;
+        table.FreePlate();
+        RestoreIngredient();
+        StopProcessOrderCoroutine();
+    }
+
+    void StopProcessOrderCoroutine() {
+         if(processOrderCoroutine != null) {
+                    StopCoroutine(processOrderCoroutine);
+                    processOrderCoroutine = null;
+                }
     }
 }

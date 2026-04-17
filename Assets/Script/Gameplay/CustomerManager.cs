@@ -17,9 +17,11 @@ public class CustomerManager : Singleton<CustomerManager>
 
     private void OnEnable() {
         CustomerWindow.OnCustomerWindowEmpty += SpawnCustomer;
+        GameTimer.OnTimerComplete += ResetData;
     }
     private void OnDisable() {
         CustomerWindow.OnCustomerWindowEmpty -= SpawnCustomer;
+        GameTimer.OnTimerComplete -= ResetData;
     }
 
     
@@ -72,5 +74,11 @@ public class CustomerManager : Singleton<CustomerManager>
     public void ReturnObject(GameObject obj)
     {
         obj.SetActive(false);
+    }
+
+    public void ResetData() {
+        foreach (var obj in pool) {
+            obj.SetActive(false);
+        }
     }
 }
